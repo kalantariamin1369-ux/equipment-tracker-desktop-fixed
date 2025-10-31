@@ -55,9 +55,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Otp.NET">
-      <HintPath>packages\Otp.NET.1.4.0\lib\net462\Otp.NET.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
