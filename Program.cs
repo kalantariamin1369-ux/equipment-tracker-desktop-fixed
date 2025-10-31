@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using EquipmentTracker.Database;
 
 namespace EquipmentTracker
 {
@@ -14,26 +13,10 @@ namespace EquipmentTracker
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             
             try
             {
-                // Initialize database
-                var dbManager = new DatabaseManager();
-                dbManager.CreateDefaultAdmin();
-                
-                // Check for automatic backup
-                var config = System.Configuration.ConfigurationManager.AppSettings;
-                bool enableAutoBackup = bool.Parse(config["EnableAutoBackup"] ?? "true");
-                if (enableAutoBackup)
-                {
-                    // Perform backup on startup
-                    dbManager.BackupDatabase();
-                }
-                
-                // Start the application with login form
-                // For now, we'll run MainForm directly
-                // In production, start with LoginForm first
+                // Run the application with the main form
                 Application.Run(new Views.MainForm());
             }
             catch (Exception ex)
