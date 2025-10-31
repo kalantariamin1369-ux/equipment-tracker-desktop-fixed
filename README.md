@@ -2,16 +2,9 @@
 
 [![Build Equipment Tracker Installer](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/actions/workflows/build-installer.yml/badge.svg)](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/actions/workflows/build-installer.yml)
 
-A **comprehensive desktop application** for tracking and managing equipment assets with advanced features including authentication, role-based access control, reporting, and cross-Windows compatibility.
+A **comprehensive desktop application** for tracking and managing equipment assets with advanced features including reporting and cross-Windows compatibility.
 
 ## ✨ Key Features
-
-### 🔐 Security & Authentication
-- **Secure User Authentication** with password hashing and salt
-- **Two-Factor Authentication (2FA)** support using Google Authenticator
-- **Role-Based Access Control** (Admin, Manager, User, Viewer)
-- **Account Lockout Protection** after failed login attempts
-- **Session Management** with configurable timeout
 
 ### 📊 Asset Management
 - **Comprehensive Equipment Tracking** with detailed fields
@@ -46,210 +39,137 @@ A **comprehensive desktop application** for tracking and managing equipment asse
 - **Automatic Database Backup** with configurable intervals
 - **Manual Backup** on demand
 - **Restore Functionality** from backup files
-- **Backup History** management
+- **Data Integrity Checks** to prevent corruption
+- **Backup History** tracking
 
-### 🔔 Notifications
-- **Email Notifications** for important events (configurable SMTP)
-- **In-App Notifications** for real-time alerts
-- **Customizable Alerts** for warranty expiry, assignments, returns
+### 🖨️ QR Code & Barcode Support
+- **QR Code Generation** for equipment tags
+- **Barcode Scanning** support
+- **Label Printing** integration
+- **Mobile-friendly** QR code access
 
-### 🏷️ Barcode & QR Code
-- **QR Code Generation** for each asset
-- **Barcode Support** with multiple formats
-- **Barcode Scanning** for quick asset lookup
-- **Printable Labels** with QR/barcode
+### 📧 Notifications
+- **Email Notifications** for important events
+- **Assignment Notifications** when equipment is assigned
+- **Expiry Alerts** for warranties and maintenance
+- **Custom Notification Rules** for different scenarios
 
 ### 🎨 User Interface
-- **Dark Theme** for low-light environments
-- **Light Theme** for standard use
-- **Theme Persistence** per user
-- **Responsive Layout** with resizable panels
+- **Modern Windows Forms** design
+- **Dark/Light Theme** support
+- **Responsive Layout** adapting to window size
+- **Customizable Dashboard** with widgets
+- **Keyboard Shortcuts** for power users
+- **Accessibility Features** for better usability
 
-### 🌐 Localization
-- **English Language** support
-- **Persian (Farsi) Language** support
-- **RTL Text Support** for Persian
-- **Easy Language Switching**
-
-### 💻 Windows Compatibility
-- ✅ **Windows Vista** (SP2)
-- ✅ **Windows 7** (SP1)
-- ✅ **Windows 8** and **8.1**
-- ✅ **Windows 10** (all versions)
-- ✅ **Windows 11** (all versions)
-- Compatible with both **32-bit and 64-bit** architectures
-
-## 📥 Installation
-
-### Option 1: MSI Installer (Recommended)
-
-1. Go to [Releases](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/releases)
-2. Download the latest `EquipmentTracker-Setup.msi`
-3. Run the installer with **administrator privileges**
-4. Follow the setup wizard
-5. Launch **Equipment Tracker** from Start Menu
-6. Default login: `admin` / `admin` (change immediately!)
-
-### Option 2: Portable Version
-
-1. Download `EquipmentTracker-Portable.zip` from [Releases](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/releases)
-2. Extract to any folder
-3. Run `EquipmentTracker.exe`
-4. No installation required!
-
-## 🛠️ Development Setup
+## 🚀 Installation
 
 ### Prerequisites
-- **Visual Studio 2019 or later** with .NET desktop development workload
-- **.NET Framework 4.7.2** or higher
-- **NuGet Package Manager**
+- Windows 7 SP1 or later (Windows 10/11 recommended)
+- .NET Framework 4.7.2 or later
+- 50 MB free disk space
+- Administrator privileges for installation
 
-### Clone & Build
+### Installation Steps
 
+1. **Download** the latest installer from [Releases](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/releases)
+2. **Run** `EquipmentTrackerInstaller.msi` as Administrator
+3. **Follow** the installation wizard
+4. **Launch** Equipment Tracker from Start Menu or Desktop
+
+### Silent Installation
+For enterprise deployment:
 ```bash
-git clone https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed.git
-cd equipment-tracker-desktop-fixed
+msiexec /i EquipmentTrackerInstaller.msi /quiet /norestart
 ```
-
-### Restore NuGet Packages
-
-```bash
-nuget restore EquipmentTracker.sln
-```
-
-Or in Visual Studio: `Tools` → `NuGet Package Manager` → `Restore NuGet Packages`
-
-### Build Solution
-
-```bash
-msbuild EquipmentTracker.sln /p:Configuration=Release /p:Platform="Any CPU"
-```
-
-Or in Visual Studio: `Build` → `Build Solution` (Ctrl+Shift+B)
-
-### Run Application
-
-Press `F5` in Visual Studio or run `bin\Release\EquipmentTracker.exe`
 
 ## 📦 Dependencies
+
+This application uses the following NuGet packages:
 
 - **System.Data.SQLite.Core** (1.0.118.0) - SQLite database engine
 - **QRCoder** (1.4.3) - QR code generation
 - **ZXing.Net** (0.16.9) - Barcode scanning
 - **iTextSharp** (5.5.13.3) - PDF generation
 - **Newtonsoft.Json** (13.0.3) - JSON serialization
-- **Google.Authenticator** (2.3.0) - Two-factor authentication
+
+Framework assemblies:
 - **System.Windows.Forms.DataVisualization** - Charts and graphs
 
-## 🔧 Configuration
+## 🛠️ Configuration
 
-Edit `App.config` to customize:
+### Database Configuration
+The application uses SQLite database (`equipmenttracker.db`) stored in:
+```
+%APPDATA%\EquipmentTracker\equipmenttracker.db
+```
 
+### Email Configuration
+Edit `App.config` to configure SMTP settings:
 ```xml
 <appSettings>
-  <add key="DatabasePath" value="equipmenttracker.db" />
-  <add key="BackupPath" value="Backups" />
-  <add key="EnableAutoBackup" value="true" />
-  <add key="BackupIntervalHours" value="24" />
-  <add key="DefaultLanguage" value="en" />
-  <add key="EnableEmailNotifications" value="false" />
-  <add key="SmtpServer" value="" />
+  <add key="SmtpServer" value="smtp.gmail.com" />
   <add key="SmtpPort" value="587" />
-  <add key="SmtpUsername" value="" />
-  <add key="SmtpPassword" value="" />
-  <add key="Enable2FA" value="false" />
-  <add key="SessionTimeoutMinutes" value="30" />
+  <add key="SmtpUsername" value="your-email@gmail.com" />
+  <add key="SmtpPassword" value="your-app-password" />
+  <add key="SmtpEnableSSL" value="true" />
 </appSettings>
 ```
 
-## 🚀 CI/CD Workflow
+## 📖 User Guide
 
-### Automatic Builds
+### First Time Setup
 
-The GitHub Actions workflow automatically builds installers on every push to `main` branch:
+1. **Launch** the application
+2. **Configure Email** for notifications (optional)
+3. **Setup Equipment Categories** and Departments
+4. **Begin tracking** your equipment
 
-1. **Builds** the .NET Framework solution
-2. **Creates** MSI installer using WiX Toolset
-3. **Generates** portable ZIP package
-4. **Uploads** artifacts
-5. **Creates** GitHub releases
+### Adding Equipment
 
-### Manual Trigger
+1. Click **Add Equipment** button
+2. Fill in required fields:
+   - Equipment Name
+   - Category
+   - Serial Number
+   - Purchase Date
+   - Location
+   - Department
+3. Optional fields:
+   - Purchase Price
+   - Warranty Expiry
+   - Condition
+   - Notes
+4. Click **Save** to add equipment
 
-1. Go to [Actions tab](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/actions)
-2. Click **Build Equipment Tracker Installer**
-3. Click **Run workflow** → **Run workflow**
-4. Wait for completion (2-3 minutes)
-5. Download artifacts from workflow run
+### Assigning Equipment
 
-### Download Installers
+1. Select equipment from list
+2. Click **Assign** button
+3. Choose assignee
+4. Set expected return date (optional)
+5. Add assignment notes
+6. Click **Confirm Assignment**
 
-After workflow completes:
-- Go to **Actions** → Select workflow run
-- Download **EquipmentTracker-Setup-MSI** artifact
-- Download **EquipmentTracker-Portable** artifact
+### Generating Reports
 
-## 📁 Project Structure
-
-```
-equipment-tracker-desktop-fixed/
-├── .github/
-│   └── workflows/
-│       └── build-installer.yml    # CI/CD workflow
-├── Controllers/                    # Business logic controllers
-├── Database/
-│   └── DatabaseManager.cs         # Database operations
-├── Models/
-│   ├── Equipment.cs               # Equipment model
-│   ├── User.cs                    # User model
-│   └── AuditLog.cs                # Audit trail model
-├── Properties/
-│   └── AssemblyInfo.cs            # Assembly metadata
-├── Views/                         # UI forms and windows
-├── App.config                     # Application configuration
-├── EquipmentTracker.csproj        # Project file
-├── EquipmentTracker.sln           # Solution file
-├── packages.config                # NuGet packages
-├── Program.cs                     # Application entry point
-└── README.md                      # This file
-```
-
-## 👥 User Roles
-
-### Admin
-- Full system access
-- User management
-- System configuration
-- All asset operations
-- Backup/restore
-- View all audit logs
-
-### Manager
-- Asset management (CRUD)
-- View reports
-- Export data
-- Assign/return assets
-- View department audit logs
-
-### User
-- View assets
-- Request assignments
-- Update assigned assets
-- View personal history
-
-### Viewer
-- Read-only access
-- View assets and reports
-- No modifications allowed
+1. Go to **Reports** menu
+2. Select report type:
+   - Equipment Summary
+   - Assignment History
+   - Audit Log
+   - Custom Report
+3. Configure filters and date range
+4. Choose export format (PDF/CSV)
+5. Click **Generate Report**
 
 ## 🔒 Security Best Practices
 
-1. **Change Default Password** immediately after first login
-2. **Enable 2FA** for all admin accounts
-3. **Regular Backups** - enable automatic backups
-4. **Strong Passwords** - enforce minimum requirements
-5. **Audit Logs** - regularly review for suspicious activity
-6. **Update Regularly** - keep application up to date
+1. **Regular Backups** - configure automatic backups
+2. **Strong Passwords** - enforce minimum requirements (if authentication added)
+3. **Audit Logs** - regularly review for suspicious activity
+4. **Update Regularly** - keep application up to date
+5. **Secure Database** - protect database files with appropriate permissions
 
 ## 🐛 Troubleshooting
 
@@ -262,11 +182,6 @@ equipment-tracker-desktop-fixed/
 - Verify SMTP server settings in `App.config`
 - Check firewall/antivirus blocking SMTP port
 - Test with Gmail: use App Password, not regular password
-
-### 2FA Not Working
-- Ensure device time is synchronized
-- Re-scan QR code in Google Authenticator
-- Use backup codes if available
 
 ### Installation Fails
 - Run installer as Administrator
