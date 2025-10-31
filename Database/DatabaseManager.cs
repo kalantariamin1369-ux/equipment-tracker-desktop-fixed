@@ -76,6 +76,38 @@ namespace EquipmentTracker.Database
             return equipmentList;
         }
 
+        public Equipment GetEquipmentById(int id)
+        {
+            using (var conn = new SQLiteConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT * FROM Equipment WHERE Id = @Id";
+
+                using (var cmd = new SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Equipment
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+                                Name = reader["Name"].ToString(),
+                                Type = reader["Type"].ToString(),
+                                SerialNumber = reader["SerialNumber"].ToString(),
+                                Status = reader["Status"].ToString(),
+                                PurchaseDate = DateTime.Parse(reader["PurchaseDate"].ToString()),
+                                Price = Convert.ToDecimal(reader["Price"])
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public void AddEquipment(Equipment equipment)
         {
             using (var conn = new SQLiteConnection(connectionString))
