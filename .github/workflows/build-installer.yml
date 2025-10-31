@@ -56,17 +56,7 @@ jobs:
               <Directory Id="ProgramFilesFolder">
                 <Directory Id="INSTALLFOLDER" Name="Equipment Tracker" />
               </Directory>
-              <Directory Id="ProgramMenuFolder">
-                <Directory Id="ApplicationProgramsFolder" Name="Equipment Tracker" />
-              </Directory>
             </Directory>
-            <DirectoryRef Id="ApplicationProgramsFolder">
-              <Component Id="ApplicationShortcut" Guid="B2C3D4E5-F6A7-5B6C-9D8E-0F1A2B3C4D5E">
-                <Shortcut Id="ApplicationStartMenuShortcut" Name="Equipment Tracker" Description="Equipment Tracking System" Target="[INSTALLFOLDER]EquipmentTracker.exe" WorkingDirectory="INSTALLFOLDER" />
-                <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall" />
-                <RegistryValue Root="HKCU" Key="Software\EquipmentTracker" Name="installed" Type="integer" Value="1" KeyPath="yes" />
-              </Component>
-            </DirectoryRef>
             <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
               <Component Id="MainExecutable" Guid="C3D4E5F6-A7B8-6C7D-0E9F-1A2B3C4D5E6F">
                 <File Id="EquipmentTrackerExe" Source="$(var.SourceDir)\EquipmentTracker.exe" KeyPath="yes" />
@@ -123,7 +113,7 @@ jobs:
           1. Download the MSI installer below
           2. Run the installer with administrator privileges
           3. Follow the setup wizard
-          4. Launch Equipment Tracker from Start Menu
+          4. Launch Equipment Tracker from the installation directory
           
           ### Portable Version:
           Download the portable ZIP file, extract it, and run EquipmentTracker.exe directly.
