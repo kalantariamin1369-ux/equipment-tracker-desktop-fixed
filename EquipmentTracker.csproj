@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Equipment.cs" />
-    <Compile Include="Database\DatabaseHelper.cs" />
+    <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Controllers\EquipmentController.cs" />
     <Compile Include="Views\MainForm.cs">
       <SubType>Form</SubType>
