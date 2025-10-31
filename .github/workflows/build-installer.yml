@@ -1,0 +1,141 @@
+name: Build Equipment Tracker Installer
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-installer:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET Framework
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+      
+    - name: Restore NuGet packages
+      run: nuget restore EquipmentTracker.sln
+      
+    - name: Build solution
+      run: msbuild EquipmentTracker.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TargetFrameworkVersion=v4.7.2
+      
+    - name: Create output directory
+      run: |
+        New-Item -ItemType Directory -Force -Path "${{github.workspace}}\installer\app"
+        Copy-Item -Path "${{github.workspace}}\bin\Release\*" -Destination "${{github.workspace}}\installer\app\" -Recurse -Force
+      
+    - name: Download WiX Toolset
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip" -OutFile "wix.zip"
+        Expand-Archive -Path "wix.zip" -DestinationPath "${{github.workspace}}\wix"
+      
+    - name: Create WiX source file
+      run: |
+        $wixContent = @'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+          <Product Id="*" Name="Equipment Tracker" Language="1033" Version="1.0.0.0" Manufacturer="Equipment Tracker Inc." UpgradeCode="A1B2C3D4-E5F6-4A5B-8C7D-9E0F1A2B3C4D">
+            <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86" />
+            <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+            <MediaTemplate EmbedCab="yes" />
+            <Feature Id="ProductFeature" Title="Equipment Tracker" Level="1">
+              <ComponentGroupRef Id="ProductComponents" />
+            </Feature>
+            <Directory Id="TARGETDIR" Name="SourceDir">
+              <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="Equipment Tracker" />
+              </Directory>
+              <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="Equipment Tracker"/>
+              </Directory>
+            </Directory>
+            <DirectoryRef Id="ApplicationProgramsFolder">
+              <Component Id="ApplicationShortcut" Guid="B2C3D4E5-F6A7-5B6C-9D8E-0F1A2B3C4D5E">
+                <Shortcut Id="ApplicationStartMenuShortcut" Name="Equipment Tracker" Description="Equipment Tracking System" Target="[INSTALLFOLDER]EquipmentTracker.exe" WorkingDirectory="INSTALLFOLDER"/>
+                <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+                <RegistryValue Root="HKCU" Key="Software\EquipmentTracker" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+              </Component>
+            </DirectoryRef>
+            <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+              <Component Id="MainExecutable" Guid="C3D4E5F6-A7B8-6C7D-0E9F-1A2B3C4D5E6F">
+                <File Id="EquipmentTrackerExe" Source="$(var.SourceDir)\EquipmentTracker.exe" KeyPath="yes" />
+              </Component>
+              <Component Id="ConfigFile" Guid="D4E5F6A7-B8C9-7D8E-1F0A-2B3C4D5E6F7A">
+                <File Id="AppConfig" Source="$(var.SourceDir)\App.config" />
+              </Component>
+            </ComponentGroup>
+          </Product>
+        </Wix>
+        '@
+        $wixContent | Out-File -FilePath "${{github.workspace}}\installer\Product.wxs" -Encoding UTF8
+      
+    - name: Build MSI installer
+      run: |
+        & "${{github.workspace}}\wix\candle.exe" -dSourceDir="${{github.workspace}}\installer\app" "${{github.workspace}}\installer\Product.wxs" -out "${{github.workspace}}\installer\Product.wixobj"
+        & "${{github.workspace}}\wix\light.exe" -out "${{github.workspace}}\EquipmentTracker-Setup.msi" "${{github.workspace}}\installer\Product.wixobj" -ext WixUIExtension
+      
+    - name: Create portable ZIP
+      run: |
+        Compress-Archive -Path "${{github.workspace}}\installer\app\*" -DestinationPath "${{github.workspace}}\EquipmentTracker-Portable.zip"
+      
+    - name: Upload MSI Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: EquipmentTracker-Setup-MSI
+        path: ${{github.workspace}}\EquipmentTracker-Setup.msi
+        
+    - name: Upload Portable ZIP
+      uses: actions/upload-artifact@v4
+      with:
+        name: EquipmentTracker-Portable
+        path: ${{github.workspace}}\EquipmentTracker-Portable.zip
+      
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        name: Release v1.0.${{ github.run_number }}
+        body: |
+          ## Equipment Tracker Desktop v1.0.${{ github.run_number }}
+          
+          ### Features:
+          - Advanced authentication with 2FA support
+          - Role-based access control (Admin, Manager, User, Viewer)
+          - Comprehensive asset search, filter, and sort
+          - Export to CSV and PDF
+          - Detailed reporting with charts
+          - Full audit trail and history logging
+          - Automatic SQLite backup and restore
+          - Email and in-app notifications
+          - Asset assignment and return tracking
+          - QR code and barcode generation and scanning
+          - Dark and light theme support
+          - Persian and English localization
+          - Compatible with Windows Vista, 7, 8, 8.1, 10, and 11
+          
+          ### Installation:
+          1. Download the MSI installer below
+          2. Run the installer with administrator privileges
+          3. Follow the setup wizard
+          4. Launch Equipment Tracker from Start Menu
+          5. Default login: admin / admin
+          
+          ### Portable Version:
+          Download the portable ZIP file, extract it, and run EquipmentTracker.exe directly.
+        files: |
+          EquipmentTracker-Setup.msi
+          EquipmentTracker-Portable.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
