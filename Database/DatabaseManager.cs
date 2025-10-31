@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.IO;
 using EquipmentTracker.Models;
 
@@ -12,20 +12,20 @@ namespace EquipmentTracker.Database
 
         public DatabaseManager(string dbPath = "equipmenttracker.db")
         {
-            connectionString = $"Data Source={dbPath};Version=3;";
+            connectionString = $"Data Source={dbPath}";
             InitializeDatabase();
         }
 
         private void InitializeDatabase()
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 CreateTables(conn);
             }
         }
 
-        private void CreateTables(SQLiteConnection conn)
+        private void CreateTables(SqliteConnection conn)
         {
             string createEquipmentTable = @"
                 CREATE TABLE IF NOT EXISTS Equipment (
@@ -38,7 +38,7 @@ namespace EquipmentTracker.Database
                     Price REAL NOT NULL
                 );";
 
-            using (var cmd = new SQLiteCommand(createEquipmentTable, conn))
+            using (var cmd = new SqliteCommand(createEquipmentTable, conn))
             {
                 cmd.ExecuteNonQuery();
             }
@@ -49,25 +49,25 @@ namespace EquipmentTracker.Database
         {
             var equipmentList = new List<Equipment>();
 
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
-                string query = "SELECT Id, Name, Type, SerialNumber, Status, PurchaseDate, Price FROM Equipment ORDER BY Id DESC";
+                string query = "SELECT * FROM Equipment";
 
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         equipmentList.Add(new Equipment
                         {
-                            Id = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            Type = reader.GetString(2),
-                            SerialNumber = reader.IsDBNull(3) ? "" : reader.GetString(3),
-                            Status = reader.GetString(4),
-                            PurchaseDate = DateTime.Parse(reader.GetString(5)),
-                            Price = reader.GetDecimal(6)
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Name = reader["Name"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            SerialNumber = reader["SerialNumber"].ToString(),
+                            Status = reader["Status"].ToString(),
+                            PurchaseDate = DateTime.Parse(reader["PurchaseDate"].ToString()),
+                            Price = Convert.ToDecimal(reader["Price"])
                         });
                     }
                 }
@@ -76,54 +76,21 @@ namespace EquipmentTracker.Database
             return equipmentList;
         }
 
-        // Get equipment by ID
-        public Equipment GetEquipmentById(int id)
-        {
-            using (var conn = new SQLiteConnection(connectionString))
-            {
-                conn.Open();
-                string query = "SELECT Id, Name, Type, SerialNumber, Status, PurchaseDate, Price FROM Equipment WHERE Id = @Id";
-
-                using (var cmd = new SQLiteCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Id", id);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new Equipment
-                            {
-                                Id = reader.GetInt32(0),
-                                Name = reader.GetString(1),
-                                Type = reader.GetString(2),
-                                SerialNumber = reader.IsDBNull(3) ? "" : reader.GetString(3),
-                                Status = reader.GetString(4),
-                                PurchaseDate = DateTime.Parse(reader.GetString(5)),
-                                Price = reader.GetDecimal(6)
-                            };
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
         // Add new equipment
         public void AddEquipment(Equipment equipment)
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
-                string query = @"INSERT INTO Equipment (Name, Type, SerialNumber, Status, PurchaseDate, Price) 
-                                VALUES (@Name, @Type, @SerialNumber, @Status, @PurchaseDate, @Price)";
+                string query = @"
+                    INSERT INTO Equipment (Name, Type, SerialNumber, Status, PurchaseDate, Price)
+                    VALUES (@Name, @Type, @SerialNumber, @Status, @PurchaseDate, @Price)";
 
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Name", equipment.Name);
                     cmd.Parameters.AddWithValue("@Type", equipment.Type);
-                    cmd.Parameters.AddWithValue("@SerialNumber", equipment.SerialNumber ?? "");
+                    cmd.Parameters.AddWithValue("@SerialNumber", equipment.SerialNumber ?? string.Empty);
                     cmd.Parameters.AddWithValue("@Status", equipment.Status);
                     cmd.Parameters.AddWithValue("@PurchaseDate", equipment.PurchaseDate.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@Price", equipment.Price);
@@ -133,23 +100,28 @@ namespace EquipmentTracker.Database
             }
         }
 
-        // Update equipment
+        // Update existing equipment
         public void UpdateEquipment(Equipment equipment)
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
-                string query = @"UPDATE Equipment 
-                                SET Name = @Name, Type = @Type, SerialNumber = @SerialNumber, 
-                                    Status = @Status, PurchaseDate = @PurchaseDate, Price = @Price 
-                                WHERE Id = @Id";
+                string query = @"
+                    UPDATE Equipment
+                    SET Name = @Name,
+                        Type = @Type,
+                        SerialNumber = @SerialNumber,
+                        Status = @Status,
+                        PurchaseDate = @PurchaseDate,
+                        Price = @Price
+                    WHERE Id = @Id";
 
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", equipment.Id);
                     cmd.Parameters.AddWithValue("@Name", equipment.Name);
                     cmd.Parameters.AddWithValue("@Type", equipment.Type);
-                    cmd.Parameters.AddWithValue("@SerialNumber", equipment.SerialNumber ?? "");
+                    cmd.Parameters.AddWithValue("@SerialNumber", equipment.SerialNumber ?? string.Empty);
                     cmd.Parameters.AddWithValue("@Status", equipment.Status);
                     cmd.Parameters.AddWithValue("@PurchaseDate", equipment.PurchaseDate.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@Price", equipment.Price);
@@ -160,19 +132,57 @@ namespace EquipmentTracker.Database
         }
 
         // Delete equipment
-        public void DeleteEquipment(int id)
+        public void DeleteEquipment(int equipmentId)
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 string query = "DELETE FROM Equipment WHERE Id = @Id";
 
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.Parameters.AddWithValue("@Id", equipmentId);
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        // Search equipment by name or type
+        public List<Equipment> SearchEquipment(string searchTerm)
+        {
+            var equipmentList = new List<Equipment>();
+
+            using (var conn = new SqliteConnection(connectionString))
+            {
+                conn.Open();
+                string query = @"
+                    SELECT * FROM Equipment
+                    WHERE Name LIKE @SearchTerm OR Type LIKE @SearchTerm";
+
+                using (var cmd = new SqliteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@SearchTerm", $"%{searchTerm}%");
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            equipmentList.Add(new Equipment
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+                                Name = reader["Name"].ToString(),
+                                Type = reader["Type"].ToString(),
+                                SerialNumber = reader["SerialNumber"].ToString(),
+                                Status = reader["Status"].ToString(),
+                                PurchaseDate = DateTime.Parse(reader["PurchaseDate"].ToString()),
+                                Price = Convert.ToDecimal(reader["Price"])
+                            });
+                        }
+                    }
+                }
+            }
+
+            return equipmentList;
         }
     }
 }
