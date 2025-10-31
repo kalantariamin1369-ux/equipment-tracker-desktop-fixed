@@ -1,5 +1,8 @@
 name: Build Equipment Tracker Installer
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main ]
