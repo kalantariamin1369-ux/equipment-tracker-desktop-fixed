@@ -1,220 +1,105 @@
-# 🏢 Equipment Tracker Desktop
+# Equipment Tracker Desktop
 
 [![Build Equipment Tracker Installer](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/actions/workflows/build-installer.yml/badge.svg)](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/actions/workflows/build-installer.yml)
 
-A **comprehensive desktop application** for tracking and managing equipment assets with advanced features including reporting and cross-Windows compatibility.
+A minimal desktop application for tracking equipment assets built with C# WinForms and SQLite.
 
-## ✨ Key Features
+## Features
 
-### 📊 Asset Management
-- **Comprehensive Equipment Tracking** with detailed fields
-- **Asset Assignment & Return** workflow
-- **Status Management** (Available, In Use, Maintenance, Retired)
-- **Condition Tracking** (Excellent, Good, Fair, Poor)
-- **Department & Location** tracking
-- **Warranty Expiry** monitoring
-- **Custom Notes** and documentation
+- **Equipment Management**: Track equipment with essential fields
+  - ID
+  - Name
+  - Type
+  - Serial Number
+  - Status (Available, In Use, Maintenance, Retired)
+  - Purchase Date
+  - Price
 
-### 🔍 Search & Filter
-- **Advanced Search** capabilities
-- **Multi-Column Filtering** by category, status, location, department
-- **Sorting Options** for all fields
-- **Quick Search** bar for instant results
+- **CRUD Operations**: Add, edit, delete, and view equipment
+- **Data Grid View**: Display all equipment in an easy-to-read table
+- **SQLite Database**: Lightweight local database storage
+- **Simple Interface**: Clean and straightforward UI
 
-### 📈 Reporting & Export
-- **Export to CSV** for Excel analysis
-- **Export to PDF** for professional reports
-- **Detailed Reports** with charts and graphs
-- **Custom Report** generation
-- **Usage Statistics** and analytics
+## Technical Details
 
-### 📝 Audit Trail
-- **Full History Logging** for all actions
-- **Audit Reports** showing who did what and when
-- **Change Tracking** with old/new values
-- **IP Address Logging** for security
-- **Session Tracking** for accountability
+- **Framework**: .NET Framework 4.7.2
+- **UI**: Windows Forms (WinForms)
+- **Database**: SQLite
+- **Language**: C#
 
-### 💾 Backup & Recovery
-- **Automatic Database Backup** with configurable intervals
-- **Manual Backup** on demand
-- **Restore Functionality** from backup files
-- **Data Integrity Checks** to prevent corruption
-- **Backup History** tracking
+## Installation
 
-### 🖨️ QR Code & Barcode Support
-- **QR Code Generation** for equipment tags
-- **Barcode Scanning** support
-- **Label Printing** integration
-- **Mobile-friendly** QR code access
+### Option 1: Installer (Recommended)
+1. Download the latest `EquipmentTracker-Installer.exe` from the [Releases](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/releases) page
+2. Run the installer and follow the prompts
+3. Launch the application from the Start Menu
 
-### 📧 Notifications
-- **Email Notifications** for important events
-- **Assignment Notifications** when equipment is assigned
-- **Expiry Alerts** for warranties and maintenance
-- **Custom Notification Rules** for different scenarios
+### Option 2: Portable Version
+1. Download the latest `EquipmentTracker-Portable.zip` from the [Releases](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/releases) page
+2. Extract the ZIP file to your desired location
+3. Run `EquipmentTracker.exe`
 
-### 🎨 User Interface
-- **Modern Windows Forms** design
-- **Dark/Light Theme** support
-- **Responsive Layout** adapting to window size
-- **Customizable Dashboard** with widgets
-- **Keyboard Shortcuts** for power users
-- **Accessibility Features** for better usability
+## Usage
 
-## 🚀 Installation
+1. **Add Equipment**: Click the "Add" button to open the form and enter equipment details
+2. **Edit Equipment**: Select an equipment row and click "Edit" to modify details
+3. **Delete Equipment**: Select an equipment row and click "Delete" to remove it
+4. **Refresh**: Click "Refresh" to reload the equipment list from the database
+
+## Building from Source
 
 ### Prerequisites
-- Windows 7 SP1 or later (Windows 10/11 recommended)
-- .NET Framework 4.7.2 or later
-- 50 MB free disk space
-- Administrator privileges for installation
+- Visual Studio 2017 or later
+- .NET Framework 4.7.2 SDK
+- System.Data.SQLite NuGet package
 
-### Installation Steps
+### Build Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed.git
+   ```
+2. Open `EquipmentTracker.sln` in Visual Studio
+3. Restore NuGet packages
+4. Build the solution (F6)
+5. Run the application (F5)
 
-1. **Download** the latest installer from [Releases](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/releases)
-2. **Run** `EquipmentTrackerInstaller.msi` as Administrator
-3. **Follow** the installation wizard
-4. **Launch** Equipment Tracker from Start Menu or Desktop
+## Project Structure
 
-### Silent Installation
-For enterprise deployment:
-```bash
-msiexec /i EquipmentTrackerInstaller.msi /quiet /norestart
+```
+EquipmentTracker/
+├── Database/
+│   └── DatabaseManager.cs    # SQLite database operations
+├── Models/
+│   └── Equipment.cs          # Equipment data model
+├── Views/
+│   ├── MainForm.cs           # Main application window
+│   └── EquipmentForm.cs      # Add/Edit equipment dialog
+├── Program.cs                # Application entry point
+├── App.config                # Application configuration
+└── EquipmentTracker.csproj   # Project file
 ```
 
-## 📦 Dependencies
+## Database Schema
 
-This application uses the following NuGet packages:
+### Equipment Table
+| Column | Type | Description |
+|--------|------|-------------|
+| Id | INTEGER | Primary key (auto-increment) |
+| Name | TEXT | Equipment name |
+| Type | TEXT | Equipment type/category |
+| SerialNumber | TEXT | Serial number (optional) |
+| Status | TEXT | Status (Available/In Use/Maintenance/Retired) |
+| PurchaseDate | TEXT | Date of purchase (ISO 8601 format) |
+| Price | REAL | Purchase price |
 
-- **System.Data.SQLite.Core** (1.0.118.0) - SQLite database engine
-- **QRCoder** (1.4.3) - QR code generation
-- **ZXing.Net** (0.16.9) - Barcode scanning
-- **iTextSharp** (5.5.13.3) - PDF generation
-- **Newtonsoft.Json** (13.0.3) - JSON serialization
+## License
 
-Framework assemblies:
-- **System.Windows.Forms.DataVisualization** - Charts and graphs
+MIT License - See LICENSE file for details
 
-## 🛠️ Configuration
-
-### Database Configuration
-The application uses SQLite database (`equipmenttracker.db`) stored in:
-```
-%APPDATA%\EquipmentTracker\equipmenttracker.db
-```
-
-### Email Configuration
-Edit `App.config` to configure SMTP settings:
-```xml
-<appSettings>
-  <add key="SmtpServer" value="smtp.gmail.com" />
-  <add key="SmtpPort" value="587" />
-  <add key="SmtpUsername" value="your-email@gmail.com" />
-  <add key="SmtpPassword" value="your-app-password" />
-  <add key="SmtpEnableSSL" value="true" />
-</appSettings>
-```
-
-## 📖 User Guide
-
-### First Time Setup
-
-1. **Launch** the application
-2. **Configure Email** for notifications (optional)
-3. **Setup Equipment Categories** and Departments
-4. **Begin tracking** your equipment
-
-### Adding Equipment
-
-1. Click **Add Equipment** button
-2. Fill in required fields:
-   - Equipment Name
-   - Category
-   - Serial Number
-   - Purchase Date
-   - Location
-   - Department
-3. Optional fields:
-   - Purchase Price
-   - Warranty Expiry
-   - Condition
-   - Notes
-4. Click **Save** to add equipment
-
-### Assigning Equipment
-
-1. Select equipment from list
-2. Click **Assign** button
-3. Choose assignee
-4. Set expected return date (optional)
-5. Add assignment notes
-6. Click **Confirm Assignment**
-
-### Generating Reports
-
-1. Go to **Reports** menu
-2. Select report type:
-   - Equipment Summary
-   - Assignment History
-   - Audit Log
-   - Custom Report
-3. Configure filters and date range
-4. Choose export format (PDF/CSV)
-5. Click **Generate Report**
-
-## 🔒 Security Best Practices
-
-1. **Regular Backups** - configure automatic backups
-2. **Strong Passwords** - enforce minimum requirements (if authentication added)
-3. **Audit Logs** - regularly review for suspicious activity
-4. **Update Regularly** - keep application up to date
-5. **Secure Database** - protect database files with appropriate permissions
-
-## 🐛 Troubleshooting
-
-### Database Issues
-- Delete `equipmenttracker.db` to reset database
-- Check file permissions in application directory
-- Restore from backup if database is corrupted
-
-### Email Notifications Not Working
-- Verify SMTP server settings in `App.config`
-- Check firewall/antivirus blocking SMTP port
-- Test with Gmail: use App Password, not regular password
-
-### Installation Fails
-- Run installer as Administrator
-- Disable antivirus temporarily
-- Check Windows version compatibility
-- Ensure .NET Framework 4.7.2 is installed
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📧 Support
+## Support
 
-For issues and questions:
-- Open an [Issue](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/issues)
-- Check existing documentation
-- Review troubleshooting section
-
-## 🔄 Version History
-
-See [Releases](https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed/releases) for version history and changelogs.
-
-## 🙏 Acknowledgments
-
-- SQLite for reliable embedded database
-- WiX Toolset for installer creation
-- GitHub Actions for CI/CD automation
-- All open-source contributors
-
----
-
-**Made with ❤️ for Equipment Management**
+If you encounter any issues or have questions, please open an issue on GitHub.
