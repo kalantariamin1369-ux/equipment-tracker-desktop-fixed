@@ -1,58 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A1B2C3D4-E5F6-4A5B-8C7D-9E0F1A2B3C4D}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>EquipmentTracker</RootNamespace>
-    <AssemblyName>EquipmentTracker</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <TargetFramework>v4.8</TargetFramework>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
+<project toolsversion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <import condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <propertygroup>
+    <configuration condition=" '$(Configuration)' == '' ">Debug</configuration>
+    <platform condition=" '$(Platform)' == '' ">AnyCPU</platform>
+    {A1B2C3D4-E5F6-4A5B-8C7D-9E0F1A2B3C4D}
+    WinExe
+    EquipmentTracker
+    EquipmentTracker
+    v4.7.2
+    v4.8
+    512
+    true
+    true
     <!-- Enable native DLL extraction for single-file deployments -->
-    <EnableSingleFileDll>true</EnableSingleFileDll>
+    true
     <!-- Set runtime identifier for proper native DLL resolution -->
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.15" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.2.3" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-</Project>
+    win-x64
+  </propertygroup>
+  <propertygroup condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    AnyCPU
+    true
+    full
+    false
+    bin\Debug\
+    DEBUG;TRACE
+    prompt
+    4
+  </propertygroup>
+  <propertygroup condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    AnyCPU
+    pdbonly
+    true
+    bin\Release\
+    TRACE
+  </propertygroup>
+</project>
