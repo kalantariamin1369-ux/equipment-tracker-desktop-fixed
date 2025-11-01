@@ -19,11 +19,12 @@ namespace EquipmentTracker.Views
         public MainForm()
         {
             InitializeComponent();
+            InitializeCustomComponents();
             dbManager = new DatabaseManager();
             LoadEquipment();
         }
 
-        private void InitializeComponent()
+        private void InitializeCustomComponents()
         {
             this.SuspendLayout();
             
