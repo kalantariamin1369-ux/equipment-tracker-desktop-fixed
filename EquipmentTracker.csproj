@@ -8,12 +8,13 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>EquipmentTracker</RootNamespace>
     <AssemblyName>EquipmentTracker</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFramework>v4.8</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <!-- Enable native DLL extraction for single-file deployments -->
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableSingleFileDll>true</EnableSingleFileDll>
     <!-- Set runtime identifier for proper native DLL resolution -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
