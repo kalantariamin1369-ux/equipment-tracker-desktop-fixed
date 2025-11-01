@@ -56,8 +56,11 @@ jobs:
         # Create installer output directory
         New-Item -ItemType Directory -Force -Path "installer"
         
-        # Copy the executable to installer directory as the installer
-        Copy-Item -Path "bin\Release\EquipmentTracker.exe" -Destination "installer\EquipmentTracker-Setup.exe"
+        # Copy all files from Release directory to installer
+        Copy-Item -Path "bin\Release\*" -Destination "installer" -Recurse -Force
+        
+        # Create zip archive with all files
+        Compress-Archive -Path "installer\*" -DestinationPath "installer\EquipmentTrackerInstaller.zip" -Force
         
         Write-Host "Installer created successfully"
         
@@ -65,28 +68,28 @@ jobs:
       run: |
         Write-Host "Verifying installer output..."
         
-        $exeFile = "installer\EquipmentTracker-Setup.exe"
+        $zipFile = "installer\EquipmentTrackerInstaller.zip"
         
-        if (Test-Path $exeFile) {
-          $exeSize = (Get-Item $exeFile).Length
-          Write-Host "✓ EXE installer: $exeFile ($([math]::Round($exeSize/1MB, 2)) MB)"
+        if (Test-Path $zipFile) {
+          $zipSize = (Get-Item $zipFile).Length
+          Write-Host "✓ Zip installer: $zipFile ($([math]::Round($zipSize/1MB, 2)) MB)"
         } else {
-          Write-Error "✗ EXE installer not found"
+          Write-Error "✗ Zip installer not found"
           exit 1
         }
         
-    - name: Upload EXE installer
+    - name: Upload Zip installer
       uses: actions/upload-artifact@v4
       with:
-        name: EquipmentTracker-EXE-Installer
-        path: installer\EquipmentTracker-Setup.exe
+        name: EquipmentTracker-Zip-Installer
+        path: installer/EquipmentTrackerInstaller.zip
         retention-days: 30
         
     - name: Create Release (on tag push)
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: installer/EquipmentTracker-Setup.exe
+        files: installer/EquipmentTrackerInstaller.zip
         generate_release_notes: true
         draft: false
       env:
