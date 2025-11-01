@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Forms;
 using EquipmentTracker.Database;
 using EquipmentTracker.Models;
-
 namespace EquipmentTracker.Views
 {
     public partial class MainForm : Form
@@ -15,7 +14,6 @@ namespace EquipmentTracker.Views
         private Button btnDelete;
         private Button btnRefresh;
         private DatabaseManager dbManager;
-
         public MainForm()
         {
             InitializeComponent();
@@ -23,7 +21,6 @@ namespace EquipmentTracker.Views
             dbManager = new DatabaseManager();
             LoadEquipment();
         }
-
         private void InitializeCustomComponents()
         {
             this.SuspendLayout();
@@ -82,7 +79,6 @@ namespace EquipmentTracker.Views
             
             this.ResumeLayout(false);
         }
-
         private void LoadEquipment()
         {
             try
@@ -109,7 +105,6 @@ namespace EquipmentTracker.Views
                 MessageBox.Show($"Error loading equipment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             using (var form = new EquipmentForm())
@@ -129,7 +124,6 @@ namespace EquipmentTracker.Views
                 }
             }
         }
-
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 0)
@@ -161,7 +155,6 @@ namespace EquipmentTracker.Views
                 }
             }
         }
-
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 0)
@@ -189,7 +182,6 @@ namespace EquipmentTracker.Views
                 }
             }
         }
-
         private void BtnRefresh_Click(object sender, EventArgs e)
         {
             LoadEquipment();
