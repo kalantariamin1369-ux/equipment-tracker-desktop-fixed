@@ -115,14 +115,5 @@ namespace EquipmentTracker.Views
         {
             LoadEquipment();
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                dbManager?.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }
