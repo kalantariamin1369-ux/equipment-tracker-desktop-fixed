@@ -53,6 +53,7 @@ namespace EquipmentTracker.Database
             {
                 conn.Open();
                 string query = "SELECT * FROM Equipment";
+
                 using (var cmd = new SqliteCommand(query, conn))
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -81,9 +82,11 @@ namespace EquipmentTracker.Database
             {
                 conn.Open();
                 string query = "SELECT * FROM Equipment WHERE Id = @Id";
+
                 using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
+
                     using (var reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -113,6 +116,7 @@ namespace EquipmentTracker.Database
                 conn.Open();
                 string query = @"INSERT INTO Equipment (Name, Type, SerialNumber, Status, PurchaseDate, Price) 
                                  VALUES (@Name, @Type, @SerialNumber, @Status, @PurchaseDate, @Price)";
+
                 using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Name", equipment.Name);
@@ -135,6 +139,7 @@ namespace EquipmentTracker.Database
                                  SET Name = @Name, Type = @Type, SerialNumber = @SerialNumber, 
                                      Status = @Status, PurchaseDate = @PurchaseDate, Price = @Price 
                                  WHERE Id = @Id";
+
                 using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", equipment.Id);
@@ -155,6 +160,7 @@ namespace EquipmentTracker.Database
             {
                 conn.Open();
                 string query = "DELETE FROM Equipment WHERE Id = @Id";
+
                 using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
