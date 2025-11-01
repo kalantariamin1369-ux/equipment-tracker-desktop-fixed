@@ -14,77 +14,8 @@ namespace EquipmentTracker.Views
         public MainForm()
         {
             InitializeComponent();
-            InitializeCustomComponents();
             dbManager = new DatabaseManager();
             LoadEquipment();
-        }
-
-        private void InitializeCustomComponents()
-        {
-            this.SuspendLayout();
-            
-            // MainForm
-            this.Text = "Equipment Tracker";
-            this.Size = new System.Drawing.Size(900, 600);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            
-            // DataGridView
-            dataGridView = new DataGridView();
-            dataGridView.Location = new System.Drawing.Point(12, 12);
-            dataGridView.Size = new System.Drawing.Size(860, 480);
-            dataGridView.AllowUserToAddRows = false;
-            dataGridView.AllowUserToDeleteRows = false;
-            dataGridView.ReadOnly = true;
-            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            this.Controls.Add(dataGridView);
-
-            // Buttons Panel
-            var buttonPanel = new Panel
-            {
-                Location = new System.Drawing.Point(12, 500),
-                Size = new System.Drawing.Size(860, 50)
-            };
-
-            btnAdd = new Button
-            {
-                Text = "Add Equipment",
-                Location = new System.Drawing.Point(0, 0),
-                Size = new System.Drawing.Size(120, 40)
-            };
-            btnAdd.Click += BtnAdd_Click;
-            buttonPanel.Controls.Add(btnAdd);
-
-            btnEdit = new Button
-            {
-                Text = "Edit Equipment",
-                Location = new System.Drawing.Point(130, 0),
-                Size = new System.Drawing.Size(120, 40)
-            };
-            btnEdit.Click += BtnEdit_Click;
-            buttonPanel.Controls.Add(btnEdit);
-
-            btnDelete = new Button
-            {
-                Text = "Delete Equipment",
-                Location = new System.Drawing.Point(260, 0),
-                Size = new System.Drawing.Size(120, 40)
-            };
-            btnDelete.Click += BtnDelete_Click;
-            buttonPanel.Controls.Add(btnDelete);
-
-            btnRefresh = new Button
-            {
-                Text = "Refresh",
-                Location = new System.Drawing.Point(390, 0),
-                Size = new System.Drawing.Size(120, 40)
-            };
-            btnRefresh.Click += BtnRefresh_Click;
-            buttonPanel.Controls.Add(btnRefresh);
-
-            this.Controls.Add(buttonPanel);
-
-            this.ResumeLayout(false);
         }
 
         private void LoadEquipment()
@@ -92,18 +23,18 @@ namespace EquipmentTracker.Views
             try
             {
                 var equipment = dbManager.GetAllEquipment();
-                dataGridView.DataSource = equipment;
+                equipmentGrid.DataSource = equipment;
                 
                 // Set column headers
-                if (dataGridView.Columns.Count > 0)
+                if (equipmentGrid.Columns.Count > 0)
                 {
-                    dataGridView.Columns["Id"].HeaderText = "ID";
-                    dataGridView.Columns["Name"].HeaderText = "Equipment Name";
-                    dataGridView.Columns["SerialNumber"].HeaderText = "Serial Number";
-                    dataGridView.Columns["Location"].HeaderText = "Location";
-                    dataGridView.Columns["Status"].HeaderText = "Status";
-                    dataGridView.Columns["PurchaseDate"].HeaderText = "Purchase Date";
-                    dataGridView.Columns["LastMaintenanceDate"].HeaderText = "Last Maintenance";
+                    equipmentGrid.Columns["Id"].HeaderText = "ID";
+                    equipmentGrid.Columns["Name"].HeaderText = "Equipment Name";
+                    equipmentGrid.Columns["SerialNumber"].HeaderText = "Serial Number";
+                    equipmentGrid.Columns["Location"].HeaderText = "Location";
+                    equipmentGrid.Columns["Status"].HeaderText = "Status";
+                    equipmentGrid.Columns["PurchaseDate"].HeaderText = "Purchase Date";
+                    equipmentGrid.Columns["LastMaintenanceDate"].HeaderText = "Last Maintenance";
                 }
             }
             catch (Exception ex)
@@ -126,14 +57,14 @@ namespace EquipmentTracker.Views
 
         private void BtnEdit_Click(object sender, EventArgs e)
         {
-            if (dataGridView.SelectedRows.Count == 0)
+            if (equipmentGrid.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select an equipment to edit.", "Information",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            var selectedRow = dataGridView.SelectedRows[0];
+            var selectedRow = equipmentGrid.SelectedRows[0];
             var equipmentId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
             var equipment = dbManager.GetEquipmentById(equipmentId);
 
@@ -151,7 +82,7 @@ namespace EquipmentTracker.Views
 
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            if (dataGridView.SelectedRows.Count == 0)
+            if (equipmentGrid.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select an equipment to delete.", "Information",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -165,7 +96,7 @@ namespace EquipmentTracker.Views
             {
                 try
                 {
-                    var selectedRow = dataGridView.SelectedRows[0];
+                    var selectedRow = equipmentGrid.SelectedRows[0];
                     var equipmentId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
                     dbManager.DeleteEquipment(equipmentId);
                     LoadEquipment();
