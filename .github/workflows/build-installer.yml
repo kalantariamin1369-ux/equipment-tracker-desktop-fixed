@@ -40,7 +40,7 @@ jobs:
       run: nuget restore EquipmentTracker.sln
       
     - name: Build solution
-      run: msbuild EquipmentTracker.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TargetFrameworkVersion=v4.6 /p:OutputPath=bin\Release\
+      run: msbuild EquipmentTracker.sln /p:Configuration=Release /p:Platform="Any CPU" /p:OutputPath=bin\Release\
       
     - name: Verify build output
       run: |
