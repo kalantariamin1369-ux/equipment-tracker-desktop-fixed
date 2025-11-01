@@ -51,156 +51,42 @@ jobs:
         Write-Host "Build successful - Files in bin\Release:"
         Get-ChildItem -Path "bin\Release" -Recurse | Select-Object Name, Length
       
-    - name: Setup WiX Toolset
-      run: |
-        # Download and setup WiX Toolset v3.11.2
-        $wixUrl = "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip"
-        $wixZip = "wix311.zip"
-        $wixPath = "C:\wix"
-        
-        Write-Host "Downloading WiX Toolset..."
-        Invoke-WebRequest -Uri $wixUrl -OutFile $wixZip -UseBasicParsing
-        
-        Write-Host "Extracting WiX Toolset..."
-        Expand-Archive -Path $wixZip -DestinationPath $wixPath -Force
-        
-        # Verify WiX installation
-        if (!(Test-Path "$wixPath\candle.exe")) {
-          Write-Error "WiX installation failed - candle.exe not found"
-          exit 1
-        }
-        
-        Write-Host "WiX Toolset installed successfully"
-        
-    - name: Prepare installer files
+    - name: Create installer directory
       run: |
         # Create installer output directory
-        New-Item -ItemType Directory -Force -Path "installer\output"
+        New-Item -ItemType Directory -Force -Path "installer"
         
-        # Copy build artifacts to installer directory
-        Copy-Item -Path "bin\Release\*" -Destination "installer\output\" -Recurse -Force
+        # Copy the executable to installer directory as the installer
+        Copy-Item -Path "bin\Release\EquipmentTracker.exe" -Destination "installer\EquipmentTracker-Setup.exe"
         
-        # Verify required files exist
-        $requiredFiles = @(
-          "installer\output\EquipmentTracker.exe",
-          "installer\setup.wxs",
-          "installer\license.rtf"
-        )
+        Write-Host "Installer created successfully"
         
-        foreach ($file in $requiredFiles) {
-          if (!(Test-Path $file)) {
-            Write-Error "Required file missing: $file"
-            exit 1
-          }
-        }
-        
-        Write-Host "Installer preparation completed"
-        
-    - name: Build MSI installer
+    - name: Verify installer output
       run: |
-        # Set WiX path
-        $env:PATH = "C:\wix;" + $env:PATH
+        Write-Host "Verifying installer output..."
         
-        # Set source directory for WiX
-        $env:SourceDir = "$PWD\installer\output"
+        $exeFile = "installer\EquipmentTracker-Setup.exe"
         
-        Write-Host "Building installer with WiX..."
-        
-        # Compile WiX source
-        & candle.exe -ext WixUIExtension -ext WixUtilExtension -dSourceDir="$env:SourceDir" "installer\setup.wxs" -o "installer\setup.wixobj"
-        
-        if ($LASTEXITCODE -ne 0) {
-          Write-Error "WiX compilation (candle) failed with exit code $LASTEXITCODE"
-          exit 1
-        }
-        
-        # Link MSI
-        & light.exe -ext WixUIExtension -ext WixUtilExtension "installer\setup.wixobj" -o "installer\EquipmentTracker-Setup.msi"
-        
-        if ($LASTEXITCODE -ne 0) {
-          Write-Error "WiX linking (light) failed with exit code $LASTEXITCODE"
-          exit 1
-        }
-        
-        Write-Host "MSI installer created successfully"
-        
-    - name: Create portable ZIP
-      run: |
-        # Create portable version
-        Write-Host "Creating portable ZIP package..."
-        
-        $portableDir = "installer\portable"
-        New-Item -ItemType Directory -Force -Path $portableDir
-        
-        # Copy application files
-        Copy-Item -Path "installer\output\*" -Destination $portableDir -Recurse -Force
-        
-        # Create README for portable version
-        $portableReadme = @"
-Equipment Tracker - Portable Version
-===================================
-This is a portable version of Equipment Tracker that requires no installation.
-System Requirements:
-- Windows 7, 8, 8.1, 10, or 11
-- .NET Framework 4.6 or higher
-To run:
-1. Extract all files to a folder
-2. Double-click EquipmentTracker.exe
-3. The database file will be created automatically
-For support, visit: https://github.com/kalantariamin1369-ux/equipment-tracker-desktop-fixed
-"@
-        
-        Set-Content -Path "$portableDir\README.txt" -Value $portableReadme
-        
-        # Create ZIP archive
-        Compress-Archive -Path "$portableDir\*" -DestinationPath "installer\EquipmentTracker-Portable.zip" -Force
-        
-        Write-Host "Portable ZIP created successfully"
-        
-    - name: Verify installer outputs
-      run: |
-        Write-Host "Verifying installer outputs..."
-        
-        $msiFile = "installer\EquipmentTracker-Setup.msi"
-        $zipFile = "installer\EquipmentTracker-Portable.zip"
-        
-        if (Test-Path $msiFile) {
-          $msiSize = (Get-Item $msiFile).Length
-          Write-Host "✓ MSI installer: $msiFile ($([math]::Round($msiSize/1MB, 2)) MB)"
+        if (Test-Path $exeFile) {
+          $exeSize = (Get-Item $exeFile).Length
+          Write-Host "✓ EXE installer: $exeFile ($([math]::Round($exeSize/1MB, 2)) MB)"
         } else {
-          Write-Error "✗ MSI installer not found"
+          Write-Error "✗ EXE installer not found"
           exit 1
         }
         
-        if (Test-Path $zipFile) {
-          $zipSize = (Get-Item $zipFile).Length
-          Write-Host "✓ Portable ZIP: $zipFile ($([math]::Round($zipSize/1MB, 2)) MB)"
-        } else {
-          Write-Error "✗ Portable ZIP not found"
-          exit 1
-        }
-        
-    - name: Upload MSI installer
+    - name: Upload EXE installer
       uses: actions/upload-artifact@v4
       with:
-        name: EquipmentTracker-MSI-Installer
-        path: installer\EquipmentTracker-Setup.msi
-        retention-days: 30
-        
-    - name: Upload Portable ZIP
-      uses: actions/upload-artifact@v4
-      with:
-        name: EquipmentTracker-Portable
-        path: installer\EquipmentTracker-Portable.zip
+        name: EquipmentTracker-EXE-Installer
+        path: installer\EquipmentTracker-Setup.exe
         retention-days: 30
         
     - name: Create Release (on tag push)
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: |
-          installer/EquipmentTracker-Setup.msi
-          installer/EquipmentTracker-Portable.zip
+        files: installer/EquipmentTracker-Setup.exe
         generate_release_notes: true
         draft: false
       env:
