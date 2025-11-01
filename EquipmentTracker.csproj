@@ -46,7 +46,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.Data.Sqlite, Version=9.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Data.Sqlite.9.0.0\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
+      <HintPath>packages\Microsoft.Data.Sqlite.Core.9.0.0\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.core, Version=2.1.11, Culture=neutral, PublicKeyToken=1488e028ca7ab535, processorArchitecture=MSIL">
       <HintPath>packages\SQLitePCLRaw.core.2.1.11\lib\netstandard2.0\SQLitePCLRaw.core.dll</HintPath>
@@ -55,7 +55,10 @@
       <HintPath>packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.provider.e_sqlite3, Version=2.1.11, Culture=neutral, PublicKeyToken=9c301db686d0bd12, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Data.Sqlite.bundle.9.0.0\lib\netstandard2.0\SQLitePCLRaw.provider.e_sqlite3.dll</HintPath>
+      <HintPath>packages\SQLitePCLRaw.provider.e_sqlite3.2.1.11\lib\netstandard2.0\SQLitePCLRaw.provider.e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.bundle_e_sqlite3, Version=2.1.11, Culture=neutral, PublicKeyToken=e4ad490600e2234c, processorArchitecture=MSIL">
+      <HintPath>packages\SQLitePCLRaw.bundle_e_sqlite3.2.1.11\lib\net461\SQLitePCLRaw.bundle_e_sqlite3.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -92,4 +95,4 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-</Project>
+</Project>o
