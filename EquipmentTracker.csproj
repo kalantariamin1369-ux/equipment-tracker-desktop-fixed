@@ -37,6 +37,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.15" />
+    <PackageReference Include="Microsoft.Data.Sqlite.bundle" Version="7.0.15" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,49 +53,5 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <!-- CORRECTED: Use Microsoft.Data.Sqlite and Microsoft.Data.Sqlite.Core only -->
-    <!-- Removed obsolete SQLitePCLRaw.bundle_e_sqlite3 and SQLitePCLRaw.lib.e_sqlite3 -->
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.0" />
-    <!-- BEST PRACTICE: Use SQLitePCLRaw.bundle_e_sqlite3 for native library management -->
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
-  </ItemGroup>
-  <!-- CORRECTED: Ensure native DLLs are copied to output directory -->
-  <!-- Pattern from web:167, web:168, web:169, web:172, web:180 -->
-  <ItemGroup>
-    <!-- Copy all native libraries from runtimes folder to output -->
-    <None Include="$(MSBuildThisFileDirectory)..\packages\SQLitePCLRaw.lib.e_sqlite3.2.1.10\runtimes\win-x64\native\e_sqlite3.dll" Condition="Exists('$(MSBuildThisFileDirectory)..\packages\SQLitePCLRaw.lib.e_sqlite3.2.1.10\runtimes\win-x64\native\e_sqlite3.dll')">
-      <Link>e_sqlite3.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <!-- Fallback for NuGet automatic resolution -->
-    <ContentWithTargetPath Include="$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3\2.1.10\runtimes\win-x64\native\e_sqlite3.dll" Condition="Exists('$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3\2.1.10\runtimes\win-x64\native\e_sqlite3.dll')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>e_sqlite3.dll</TargetPath>
-    </ContentWithTargetPath>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
-    <Folder Include="Views\" />
-    <Folder Include="Database\" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- POST-BUILD: Ensure native DLLs are present in output -->
-  <Target Name="CopyNativeDlls" AfterTargets="Build">
-    <Message Text="Copying native SQLite DLLs to output directory..." Importance="high" />
-    <!-- Copy from NuGet cache if available -->
-    <Copy SourceFiles="$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3\2.1.10\runtimes\win-x64\native\e_sqlite3.dll" 
-          DestinationFolder="$(OutputPath)" 
-          Condition="Exists('$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3\2.1.10\runtimes\win-x64\native\e_sqlite3.dll')" 
-          SkipUnchangedFiles="true" />
-  </Target>
 </Project>
