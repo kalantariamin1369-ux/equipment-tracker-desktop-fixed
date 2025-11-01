@@ -15,6 +15,11 @@ namespace EquipmentTracker.Views
         {
             InitializeComponent();
             dbManager = new DatabaseManager();
+            this.Load += new System.EventHandler(this.MainForm_Load);
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
             LoadEquipment();
         }
 
@@ -44,7 +49,7 @@ namespace EquipmentTracker.Views
             }
         }
 
-        private void BtnAdd_Click(object sender, EventArgs e)
+        private void btnAdd_Click(object sender, EventArgs e)
         {
             using (var form = new EquipmentForm())
             {
@@ -55,7 +60,7 @@ namespace EquipmentTracker.Views
             }
         }
 
-        private void BtnEdit_Click(object sender, EventArgs e)
+        private void btnEdit_Click(object sender, EventArgs e)
         {
             if (equipmentGrid.SelectedRows.Count == 0)
             {
@@ -80,7 +85,7 @@ namespace EquipmentTracker.Views
             }
         }
 
-        private void BtnDelete_Click(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             if (equipmentGrid.SelectedRows.Count == 0)
             {
@@ -111,7 +116,7 @@ namespace EquipmentTracker.Views
             }
         }
 
-        private void BtnRefresh_Click(object sender, EventArgs e)
+        private void btnRefresh_Click(object sender, EventArgs e)
         {
             LoadEquipment();
         }
