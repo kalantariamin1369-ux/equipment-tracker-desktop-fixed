@@ -4,16 +4,13 @@ using System.Linq;
 using System.Windows.Forms;
 using EquipmentTracker.Database;
 using EquipmentTracker.Models;
+
 namespace EquipmentTracker.Views
 {
     public partial class MainForm : Form
     {
-        private DataGridView dataGridView;
-        private Button btnAdd;
-        private Button btnEdit;
-        private Button btnDelete;
-        private Button btnRefresh;
         private DatabaseManager dbManager;
+
         public MainForm()
         {
             InitializeComponent();
@@ -21,6 +18,7 @@ namespace EquipmentTracker.Views
             dbManager = new DatabaseManager();
             LoadEquipment();
         }
+
         private void InitializeCustomComponents()
         {
             this.SuspendLayout();
@@ -34,157 +32,166 @@ namespace EquipmentTracker.Views
             dataGridView = new DataGridView();
             dataGridView.Location = new System.Drawing.Point(12, 12);
             dataGridView.Size = new System.Drawing.Size(860, 480);
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView.MultiSelect = false;
             dataGridView.AllowUserToAddRows = false;
+            dataGridView.AllowUserToDeleteRows = false;
             dataGridView.ReadOnly = true;
+            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             this.Controls.Add(dataGridView);
-            
-            // Button Panel
-            int buttonY = 500;
-            int buttonSpacing = 90;
-            
-            // Add Button
-            btnAdd = new Button();
-            btnAdd.Text = "Add";
-            btnAdd.Location = new System.Drawing.Point(12, buttonY);
-            btnAdd.Size = new System.Drawing.Size(80, 30);
+
+            // Buttons Panel
+            var buttonPanel = new Panel
+            {
+                Location = new System.Drawing.Point(12, 500),
+                Size = new System.Drawing.Size(860, 50)
+            };
+
+            btnAdd = new Button
+            {
+                Text = "Add Equipment",
+                Location = new System.Drawing.Point(0, 0),
+                Size = new System.Drawing.Size(120, 40)
+            };
             btnAdd.Click += BtnAdd_Click;
-            this.Controls.Add(btnAdd);
-            
-            // Edit Button
-            btnEdit = new Button();
-            btnEdit.Text = "Edit";
-            btnEdit.Location = new System.Drawing.Point(12 + buttonSpacing, buttonY);
-            btnEdit.Size = new System.Drawing.Size(80, 30);
+            buttonPanel.Controls.Add(btnAdd);
+
+            btnEdit = new Button
+            {
+                Text = "Edit Equipment",
+                Location = new System.Drawing.Point(130, 0),
+                Size = new System.Drawing.Size(120, 40)
+            };
             btnEdit.Click += BtnEdit_Click;
-            this.Controls.Add(btnEdit);
-            
-            // Delete Button
-            btnDelete = new Button();
-            btnDelete.Text = "Delete";
-            btnDelete.Location = new System.Drawing.Point(12 + buttonSpacing * 2, buttonY);
-            btnDelete.Size = new System.Drawing.Size(80, 30);
+            buttonPanel.Controls.Add(btnEdit);
+
+            btnDelete = new Button
+            {
+                Text = "Delete Equipment",
+                Location = new System.Drawing.Point(260, 0),
+                Size = new System.Drawing.Size(120, 40)
+            };
             btnDelete.Click += BtnDelete_Click;
-            this.Controls.Add(btnDelete);
-            
-            // Refresh Button
-            btnRefresh = new Button();
-            btnRefresh.Text = "Refresh";
-            btnRefresh.Location = new System.Drawing.Point(12 + buttonSpacing * 3, buttonY);
-            btnRefresh.Size = new System.Drawing.Size(80, 30);
+            buttonPanel.Controls.Add(btnDelete);
+
+            btnRefresh = new Button
+            {
+                Text = "Refresh",
+                Location = new System.Drawing.Point(390, 0),
+                Size = new System.Drawing.Size(120, 40)
+            };
             btnRefresh.Click += BtnRefresh_Click;
-            this.Controls.Add(btnRefresh);
-            
+            buttonPanel.Controls.Add(btnRefresh);
+
+            this.Controls.Add(buttonPanel);
+
             this.ResumeLayout(false);
         }
+
         private void LoadEquipment()
         {
             try
             {
                 var equipment = dbManager.GetAllEquipment();
-                var dataTable = new DataTable();
-                dataTable.Columns.Add("ID", typeof(int));
-                dataTable.Columns.Add("Name", typeof(string));
-                dataTable.Columns.Add("Type", typeof(string));
-                dataTable.Columns.Add("Serial Number", typeof(string));
-                dataTable.Columns.Add("Status", typeof(string));
-                dataTable.Columns.Add("Purchase Date", typeof(DateTime));
-                dataTable.Columns.Add("Price", typeof(decimal));
+                dataGridView.DataSource = equipment;
                 
-                foreach (var eq in equipment)
+                // Set column headers
+                if (dataGridView.Columns.Count > 0)
                 {
-                    dataTable.Rows.Add(eq.Id, eq.Name, eq.Type, eq.SerialNumber, eq.Status, eq.PurchaseDate, eq.Price);
+                    dataGridView.Columns["Id"].HeaderText = "ID";
+                    dataGridView.Columns["Name"].HeaderText = "Equipment Name";
+                    dataGridView.Columns["SerialNumber"].HeaderText = "Serial Number";
+                    dataGridView.Columns["Location"].HeaderText = "Location";
+                    dataGridView.Columns["Status"].HeaderText = "Status";
+                    dataGridView.Columns["PurchaseDate"].HeaderText = "Purchase Date";
+                    dataGridView.Columns["LastMaintenanceDate"].HeaderText = "Last Maintenance";
                 }
-                
-                dataGridView.DataSource = dataTable;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading equipment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading equipment: {ex.Message}", "Error", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             using (var form = new EquipmentForm())
             {
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    try
-                    {
-                        dbManager.AddEquipment(form.Equipment);
-                        LoadEquipment();
-                        MessageBox.Show("Equipment added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error adding equipment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    LoadEquipment();
                 }
             }
         }
+
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select an equipment to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an equipment to edit.", "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            
-            int id = (int)dataGridView.SelectedRows[0].Cells[0].Value;
-            var equipment = dbManager.GetEquipmentById(id);
-            
+
+            var selectedRow = dataGridView.SelectedRows[0];
+            var equipmentId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+            var equipment = dbManager.GetEquipmentById(equipmentId);
+
             if (equipment != null)
             {
                 using (var form = new EquipmentForm(equipment))
                 {
                     if (form.ShowDialog() == DialogResult.OK)
                     {
-                        try
-                        {
-                            dbManager.UpdateEquipment(form.Equipment);
-                            LoadEquipment();
-                            MessageBox.Show("Equipment updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Error updating equipment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        LoadEquipment();
                     }
                 }
             }
         }
+
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 0)
             {
-            MessageBox.Show("Please select an equipment to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an equipment to delete.", "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            
-            int id = (int)dataGridView.SelectedRows[0].Cells[0].Value;
-            string name = dataGridView.SelectedRows[0].Cells[1].Value.ToString();
-            
-            var result = MessageBox.Show($"Are you sure you want to delete '{name}'?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            
+
+            var result = MessageBox.Show("Are you sure you want to delete this equipment?",
+                "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
             if (result == DialogResult.Yes)
             {
                 try
                 {
-                    dbManager.DeleteEquipment(id);
+                    var selectedRow = dataGridView.SelectedRows[0];
+                    var equipmentId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+                    dbManager.DeleteEquipment(equipmentId);
                     LoadEquipment();
-                    MessageBox.Show("Equipment deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Equipment deleted successfully.", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error deleting equipment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Error deleting equipment: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
         private void BtnRefresh_Click(object sender, EventArgs e)
         {
             LoadEquipment();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                dbManager?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
