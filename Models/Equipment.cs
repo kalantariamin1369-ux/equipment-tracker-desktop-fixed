@@ -1,5 +1,4 @@
 using System;
-
 namespace EquipmentTracker.Models
 {
     public class Equipment
@@ -11,7 +10,6 @@ namespace EquipmentTracker.Models
         public string Status { get; set; }
         public DateTime PurchaseDate { get; set; }
         public decimal Price { get; set; }
-
         public Equipment()
         {
             Id = 0;
