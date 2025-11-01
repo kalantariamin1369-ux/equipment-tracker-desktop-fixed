@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.IO;
 using EquipmentTracker.Models;
 
@@ -13,20 +13,20 @@ namespace EquipmentTracker.Database
 
         public DatabaseManager(string dbPath = "equipmenttracker.db")
         {
-            connectionString = $"Data Source={dbPath};Version=3;";
+            connectionString = $"Data Source={dbPath}";
             InitializeDatabase();
         }
 
         private void InitializeDatabase()
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 CreateTables(conn);
             }
         }
 
-        private void CreateTables(SQLiteConnection conn)
+        private void CreateTables(SqliteConnection conn)
         {
             string createEquipmentTable = @"
                 CREATE TABLE IF NOT EXISTS Equipment (
@@ -39,7 +39,7 @@ namespace EquipmentTracker.Database
                     Price REAL NOT NULL
                 );";
 
-            using (var cmd = new SQLiteCommand(createEquipmentTable, conn))
+            using (var cmd = new SqliteCommand(createEquipmentTable, conn))
             {
                 cmd.ExecuteNonQuery();
             }
@@ -49,12 +49,11 @@ namespace EquipmentTracker.Database
         {
             var equipmentList = new List<Equipment>();
 
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 string query = "SELECT * FROM Equipment";
-
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -78,12 +77,11 @@ namespace EquipmentTracker.Database
 
         public Equipment GetEquipmentById(int id)
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 string query = "SELECT * FROM Equipment WHERE Id = @Id";
-
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
                     using (var reader = cmd.ExecuteReader())
@@ -110,13 +108,12 @@ namespace EquipmentTracker.Database
 
         public void AddEquipment(Equipment equipment)
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 string query = @"INSERT INTO Equipment (Name, Type, SerialNumber, Status, PurchaseDate, Price) 
                                  VALUES (@Name, @Type, @SerialNumber, @Status, @PurchaseDate, @Price)";
-
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Name", equipment.Name);
                     cmd.Parameters.AddWithValue("@Type", equipment.Type);
@@ -131,15 +128,14 @@ namespace EquipmentTracker.Database
 
         public void UpdateEquipment(Equipment equipment)
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 string query = @"UPDATE Equipment 
                                  SET Name = @Name, Type = @Type, SerialNumber = @SerialNumber, 
                                      Status = @Status, PurchaseDate = @PurchaseDate, Price = @Price 
                                  WHERE Id = @Id";
-
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", equipment.Id);
                     cmd.Parameters.AddWithValue("@Name", equipment.Name);
@@ -155,12 +151,11 @@ namespace EquipmentTracker.Database
 
         public void DeleteEquipment(int id)
         {
-            using (var conn = new SQLiteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 string query = "DELETE FROM Equipment WHERE Id = @Id";
-
-                using (var cmd = new SQLiteCommand(query, conn))
+                using (var cmd = new SqliteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
                     cmd.ExecuteNonQuery();
