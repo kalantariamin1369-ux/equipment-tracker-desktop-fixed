@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Equipment Tracker" Language="1033" Version="1.0.12.0" Manufacturer="Amin Kalantari" UpgradeCode="{A1B2C3D4-E5F6-4A5B-8C7D-9E0F1A2B3C4D}">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    
+    <Feature Id="ProductFeature" Title="Equipment Tracker" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+    
+    <!-- UI Configuration -->
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+      <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    </UI>
+    
+    <!-- License Agreement -->
+    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+    
+    <!-- Directory Structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Equipment Tracker" />
+      </Directory>
+      
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Equipment Tracker" />
+      </Directory>
+      
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+    
+    <!-- Components -->
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <!-- Main Application -->
+      <Component Id="MainExecutable" Guid="{B2C3D4E5-F6A7-4B5C-8D7E-9F0A1B2C3D4E}">
+        <File Id="EquipmentTrackerEXE" Source="$(var.SourceDir)\EquipmentTracker.exe" KeyPath="yes" />
+      </Component>
+      
+      <!-- Application Configuration -->
+      <Component Id="AppConfig" Guid="{C3D4E5F6-A7B8-4C5D-8E7F-9A0B1C2D3E4F}">
+        <File Id="AppConfigFile" Source="$(var.SourceDir)\EquipmentTracker.exe.config" KeyPath="yes" />
+      </Component>
+      
+      <!-- SQLite Dependencies -->
+      <Component Id="SQLiteCore" Guid="{D4E5F6A7-B8C9-4D5E-8F7A-9B0C1D2E3F4A}">
+        <File Id="SQLiteDLL" Source="$(var.SourceDir)\System.Data.SQLite.dll" KeyPath="yes" />
+      </Component>
+      
+      <Component Id="SQLiteInterop" Guid="{E5F6A7B8-C9DA-4E5F-8A7B-9C0D1E2F3A4B}">
+        <File Id="SQLiteInteropDLL" Source="$(var.SourceDir)\SQLite.Interop.dll" KeyPath="yes" />
+      </Component>
+      
+      <!-- .NET Framework Dependencies -->
+      <Component Id="SystemCore" Guid="{F6A7B8C9-DAEB-4F5A-8B7C-9D0E1F2A3B4C}">
+        <File Id="SystemCoreDLL" Source="$(var.SourceDir)\System.Core.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      
+      <Component Id="SystemData" Guid="{A7B8C9DA-EBFC-4A5B-8C7D-9E0F1A2B3C4D}">
+        <File Id="SystemDataDLL" Source="$(var.SourceDir)\System.Data.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      
+      <Component Id="SystemWinForms" Guid="{B8C9DAEB-FCAD-4B5C-8D7E-9F0A1B2C3D4E}">
+        <File Id="SystemWinFormsDLL" Source="$(var.SourceDir)\System.Windows.Forms.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      
+      <Component Id="SystemDrawing" Guid="{C9DAEBFC-ADBE-4C5D-8E7F-9A0B1C2D3E4F}">
+        <File Id="SystemDrawingDLL" Source="$(var.SourceDir)\System.Drawing.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+    </ComponentGroup>
+    
+    <!-- Start Menu Shortcut -->
+    <Component Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Guid="{DAEBFCAD-BECF-4D5E-8F7A-9B0C1D2E3F4A}">
+      <Shortcut Id="ApplicationStartMenuShortcut"
+                Name="Equipment Tracker"
+                Description="Equipment Inventory Management System"
+                Target="[#EquipmentTrackerEXE]"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\EquipmentTracker\Shortcuts" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+    
+    <!-- Desktop Shortcut -->
+    <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="{EBFCADBE-CFDA-4E5F-8A7B-9C0D1E2F3A4B}">
+      <Shortcut Id="ApplicationDesktopShortcut"
+                Name="Equipment Tracker"
+                Description="Equipment Inventory Management System"
+                Target="[#EquipmentTrackerEXE]"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RegistryValue Root="HKCU" Key="Software\EquipmentTracker\Shortcuts" Name="desktop" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+    
+    <!-- Registry Entries -->
+    <Component Id="RegistryEntries" Directory="INSTALLFOLDER" Guid="{FCADBECF-DAEB-4F5A-8B7C-9D0E1F2A3B4C}">
+      <RegistryKey Root="HKLM" Key="Software\EquipmentTracker">
+        <RegistryValue Name="InstallDir" Type="string" Value="[INSTALLFOLDER]" />
+        <RegistryValue Name="Version" Type="string" Value="1.0.12" />
+      </RegistryKey>
+    </Component>
+  </Product>
+</Wix>
